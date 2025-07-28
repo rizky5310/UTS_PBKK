@@ -14,6 +14,12 @@ use App\Http\Controllers\CoursesLecturersController;
 
 
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/user/store', [UserController::class, 'store']);
+Route::middleware('auth:sanctum')->get('/courses', [CoursesController::class, 'index']);
+Route::middleware('auth:sanctum')->apiResource('student', StudentsController::class);
+Route::delete('/student/{id}', [StudentController::class, 'destroy']);
+
+
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -31,6 +37,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('courses', CoursesController::class);
     Route::apiResource('lecturers', LecturersController::class);
     Route::apiResource('enrollment', EnrollmentController::class);
-    Route::apiResource('courselecturers', CoursesLecturersController ::class);
+    Route::apiResource('courseslecturers', CoursesLecturersController ::class);
+
    
 });

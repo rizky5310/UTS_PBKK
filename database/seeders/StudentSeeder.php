@@ -10,25 +10,27 @@ use Illuminate\Support\Carbon;
 class StudentSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * Menjalankan database seeds.
      */
     public function run(): void
     {
         Students::create([
             'name' => 'John Doe',
             'email' => 'john.doe@ifump.net',
-            'NIM' => 'IF123456',
+            'NIM' => '123456',
             'major' => 'Computer Science',
-            'enrollment_year' => Carbon::now()->subYears(2),
+            // Menggunakan tahun sebagai string
+            'enrollment_year' => Carbon::now()->subYears(2)->year, // Mengambil tahun (misalnya, '2022')
         ]);
 
-        // Optional: Additional sample students
+        // Contoh data mahasiswa tambahan
         Students::create([
             'name' => 'Jane Smith',
             'email' => 'jane.smith@ifump.net',
-            'NIM' => 'IF654321',
+            'NIM' => '654321',
             'major' => 'Information Systems',
-            'enrollment_year' => Carbon::now()->subYear(),
+            // Menggunakan tahun sebagai string
+            'enrollment_year' => Carbon::now()->subYear()->year, // Mengambil tahun (misalnya, '2023')
         ]);
     }
 }

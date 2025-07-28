@@ -57,7 +57,8 @@ class Students extends Model
             'email' => 'string',
             'NIM' => 'string',
             'major' => 'string',
-            'enrollment_year' => 'date',
+            // Change enrollment_year to 'string' to ensure it is handled as a year format
+            'enrollment_year' => 'string',
         ];
     }
 

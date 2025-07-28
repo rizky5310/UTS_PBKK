@@ -18,7 +18,8 @@ return new class extends Migration
             $table->string('email');
             $table->char('NIM', 9);
             $table->string('major');
-            $table->date('enrollment_year');
+            // Change enrollment_year to string to store only the year
+            $table->string('enrollment_year', 4); // 4 characters for year (e.g., '2022')
             $table->timestamps();
             
             $table->unique('email');

@@ -28,65 +28,65 @@ class StudentsController extends Controller
     }
 
     public function store(Request $request): JsonResponse
-    {
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|unique:students,email',
+        'NIM' => 'required|string|size:9|unique:students,NIM',
+        'major' => 'required|string|max:255',
+        'enrollment_year' => 'required|regex:/^\d{4}$/', // Only 4 digits for the year
+    ]);
+
+    $students = Students::create([
+        'name' => $request->name,
+        'email' => $request->email,
+        'NIM' => $request->NIM,
+        'major' => $request->major,
+        'enrollment_year' => $request->enrollment_year,
+    ]);
+
+    return response()->json([
+        'message' => 'Students successfully added.',
+        'data' => $students
+    ], 201);
+}
+
+public function update(Request $request, $id): JsonResponse
+{
+    try {
+        $students = Students::findOrFail($id);
+
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:students,email',
-            'NIM' => 'required|string|size:9|unique:students,NIM',
-            'major' => 'required|string|max:255',
-            'enrollment_year' => 'required|date',
+            'name' => 'sometimes|string|max:255',
+            'email' => 'sometimes|email|unique:students,email,' . $id . ',student_id',
+            'NIM' => 'sometimes|string|size:9|unique:students,NIM,' . $id . ',student_id',
+            'major' => 'sometimes|string|max:255',
+            'enrollment_year' => 'sometimes|regex:/^\d{4}$/', // Only 4 digits for the year
         ]);
 
-        $students = Students::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'NIM' => $request->NIM,
-            'major' => $request->major,
-            'enrollment_year' => $request->enrollment_year,
-        ]);
+        $data = $request->only(['name', 'email', 'NIM', 'major', 'enrollment_year']);
+        $students->update($data);
 
         return response()->json([
-            'message' => 'Students successfully added.',
+            'message' => $students->wasChanged()
+                ? 'Students successfully updated.'
+                : 'No changes made to students data.',
             'data' => $students
-        ], 201);
+        ], 200);
+    } catch (ModelNotFoundException $e) {
+        return response()->json(['message' => 'Students not found'], 404);
     }
+}
+public function destroy($id): JsonResponse
+{
+    try {
+        $students = Students::findOrFail($id);
+        $students->delete();
 
-    public function update(Request $request, $id): JsonResponse
-    {
-        try {
-            $students = Students::findOrFail($id);
-
-            $request->validate([
-                'name' => 'sometimes|string|max:255',
-                'email' => 'sometimes|email|unique:students,email,' . $id . ',student_id',
-                'NIM' => 'sometimes|string|size:9|unique:students,NIM,' . $id . ',student_id',
-                'major' => 'sometimes|string|max:255',
-                'enrollment_year' => 'sometimes|date',
-            ]);
-
-            $data = $request->only(['name', 'email', 'NIM', 'major', 'enrollment_year']);
-            $students->update($data);
-
-            return response()->json([
-                'message' => $students->wasChanged()
-                    ? 'Students successfully updated.'
-                    : 'No changes made to students data.',
-                'data' => $students
-            ], 200);
-        } catch (ModelNotFoundException $e) {
-            return response()->json(['message' => 'Students not found'], 404);
-        }
+        return response()->json(['message' => 'Students successfully deleted.']);
+    } catch (ModelNotFoundException $e) {
+        return response()->json(['message' => 'Students not found.'], 404);
     }
+}
 
-    public function destroy($id): JsonResponse
-    {
-        try {
-            $students = Students::findOrFail($id);
-            $students->delete();
-
-            return response()->json(['message' => 'Students successfully deleted.']);
-        } catch (ModelNotFoundException $e) {
-            return response()->json(['message' => 'Students not found.'], 404);
-        }
-    }
 }
